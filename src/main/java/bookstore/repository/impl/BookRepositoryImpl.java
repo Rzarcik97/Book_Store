@@ -3,6 +3,7 @@ package bookstore.repository.impl;
 import bookstore.model.Book;
 import bookstore.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -45,6 +46,13 @@ public class BookRepositoryImpl implements BookRepository {
     public List<Book> findAll() {
         Session session = sessionFactory.openSession();
         return session.createQuery("select b from Book b", Book.class).getResultList();
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        Session session = sessionFactory.openSession();
+        Book book = session.find(Book.class, id);
+        return book != null ? Optional.of(book) : Optional.empty();
     }
 
 }
