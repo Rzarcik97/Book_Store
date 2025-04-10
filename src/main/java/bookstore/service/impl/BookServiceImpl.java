@@ -10,20 +10,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+
+    @Autowired
+    public BookServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     @Override
     public Book save(Book book) {
-        return bookRepository.save(book);
+        if (book != null) {
+            return bookRepository.save(book);
+        }
+        throw new RuntimeException("Cannot save Book: Book is null");
     }
 
     @Override
     public List<Book> findAll() {
         return bookRepository.findAll();
-    }
-
-    @Autowired
-    public void setBookRepository(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
     }
 }
