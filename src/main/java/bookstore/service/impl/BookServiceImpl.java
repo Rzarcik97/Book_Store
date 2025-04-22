@@ -1,27 +1,26 @@
 package bookstore.service.impl;
 
 import bookstore.dto.BookDto;
+import bookstore.dto.BookSearchParametersDto;
 import bookstore.dto.CreateBookRequestDto;
 import bookstore.exeptions.EntityNotFoundException;
 import bookstore.mapper.BookMapper;
 import bookstore.model.Book;
-import bookstore.repository.BookRepository;
+import bookstore.repository.book.BookRepository;
+import bookstore.repository.book.BookSpecificationBuilder;
 import bookstore.service.BookService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-
-    @Autowired
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
-        this.bookRepository = bookRepository;
-        this.bookMapper = bookMapper;
-    }
+    private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto createBookRequestDto) {
@@ -64,5 +63,13 @@ public class BookServiceImpl implements BookService {
             return bookMapper.toDto(savedBook);
         }
         throw new EntityNotFoundException("Cannot save Book: Book is null");
+    }
+
+    @Override
+    public List<BookDto> search(BookSearchParametersDto params) {
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(bookSpecification).stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 }
