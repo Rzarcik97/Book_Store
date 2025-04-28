@@ -4,6 +4,7 @@ import bookstore.dto.BookSearchParametersDto;
 import bookstore.model.Book;
 import bookstore.repository.SpecificationBuilder;
 import bookstore.repository.SpecificationProviderManager;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -16,22 +17,16 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
 
     @Override
     public Specification<Book> build(BookSearchParametersDto bookSearchParameter) {
-        Specification<Book> bookSpecification = Specification.where(null);
-        if (bookSearchParameter.titles() != null && bookSearchParameter.titles().length > 0) {
-            bookSpecification = bookSpecification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("title")
-                    .getSpecification(bookSearchParameter.titles()));
-        }
-        if (bookSearchParameter.authors() != null && bookSearchParameter.authors().length > 0) {
-            bookSpecification = bookSpecification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("author")
-                    .getSpecification(bookSearchParameter.authors()));
-        }
-        if (bookSearchParameter.isbn() != null && bookSearchParameter.isbn().length > 0) {
-            bookSpecification = bookSpecification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("isbn")
-                    .getSpecification(bookSearchParameter.isbn()));
-        }
-        return bookSpecification;
+
+        Map<String, String[]> paramMap = Map.of(
+                "title", bookSearchParameter.titles(),
+                "author", bookSearchParameter.authors(),
+                "isbn", bookSearchParameter.isbns());
+        return paramMap.entrySet().stream()
+                .filter(entry -> entry.getValue() != null && entry.getValue().length > 0)
+                .map(entry -> bookSpecificationProviderManager
+                        .getSpecificationProvider(entry.getKey())
+                        .getSpecification(entry.getValue()))
+                .reduce(Specification.where(null), Specification::or);
     }
 }
