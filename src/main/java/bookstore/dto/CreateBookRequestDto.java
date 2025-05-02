@@ -2,12 +2,10 @@ package bookstore.dto;
 
 import bookstore.validation.UniqueField;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.Pattern;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
