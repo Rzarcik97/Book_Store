@@ -1,9 +1,13 @@
 package bookstore.dto;
 
 import bookstore.validation.UniqueField;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,15 +17,16 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class CreateBookRequestDto {
     private Long id;
-    @NotNull
+    @NotBlank(message = "title must not be blank")
     private String title;
-    @NotNull
+    @NotBlank(message = "author must not be blank")
     private String author;
     @NotNull
     @UniqueField
+    @Pattern(regexp = "\\d{13}", message = "isbn must be a 13-digit number")
     private String isbn;
-    @NotNull
-    @Min(0)
+    @NotNull(message = "price is required")
+    @DecimalMin(value = "0.0", message = "price must be non-negative")
     private BigDecimal price;
     private String description;
     @NotNull
