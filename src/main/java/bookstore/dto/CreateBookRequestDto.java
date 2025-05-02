@@ -14,7 +14,6 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class CreateBookRequestDto {
-    private Long id;
     @NotBlank(message = "title must not be blank")
     private String title;
     @NotBlank(message = "author must not be blank")
