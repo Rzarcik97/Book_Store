@@ -5,6 +5,7 @@ import bookstore.dto.BookSearchParametersDto;
 import bookstore.dto.CreateBookRequestDto;
 import bookstore.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Book_store", description = "bookstore management application")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/books")
@@ -45,8 +47,10 @@ public class BookController {
     @GetMapping("/search")
     @Operation(summary = "Search Books",
             description = "Search books by params: Author, Title or Isbn")
-    public List<BookDto> searchBooks(@ModelAttribute BookSearchParametersDto params) {
-        return bookService.search(params);
+    public List<BookDto> searchBooks(@ModelAttribute
+                                         @ParameterObject BookSearchParametersDto params,
+                                     @ParameterObject Pageable pageable) {
+        return bookService.search(params,pageable);
     }
 
     @PostMapping
