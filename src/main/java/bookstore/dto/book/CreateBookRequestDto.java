@@ -1,6 +1,7 @@
-package bookstore.dto;
+package bookstore.dto.book;
 
-import bookstore.validation.UniqueField;
+import bookstore.model.Book;
+import bookstore.validation.uniquefield.UniqueField;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,8 @@ public class CreateBookRequestDto {
     @NotBlank(message = "author must not be blank")
     private String author;
     @NotNull
-    @UniqueField
+    @UniqueField(entity = Book.class, fieldName = "isbn",
+            message = "ISBN already exist in DB")
     @Pattern(regexp = "\\d{13}", message = "isbn must be a 13-digit number")
     private String isbn;
     @NotNull(message = "price is required")

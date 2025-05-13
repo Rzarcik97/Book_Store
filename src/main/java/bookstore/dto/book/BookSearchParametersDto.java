@@ -1,4 +1,4 @@
-package bookstore.dto;
+package bookstore.dto.book;
 
 import java.util.ArrayList;
 import java.util.List;
