@@ -1,6 +1,6 @@
 package bookstore.repository.book;
 
-import bookstore.exeptions.SpecificationSearchFailedException;
+import bookstore.exceptions.SpecificationSearchFailedException;
 import bookstore.model.Book;
 import bookstore.repository.SpecificationProvider;
 import bookstore.repository.SpecificationProviderManager;

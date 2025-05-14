@@ -1,4 +1,4 @@
-package bookstore.exeptions;
+package bookstore.exceptions;
 
 public class EntityNotFoundException extends RuntimeException {
 
