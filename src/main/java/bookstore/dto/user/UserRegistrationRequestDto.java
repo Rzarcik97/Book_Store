@@ -6,12 +6,10 @@ import bookstore.validation.uniquefield.UniqueField;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @FieldMatch
 public class UserRegistrationRequestDto {
     @NotBlank(message = "email must not be blank")
@@ -27,6 +25,5 @@ public class UserRegistrationRequestDto {
     private String password;
     @NotBlank(message = "repeatPassword must not be blank")
     private String repeatPassword;
-    @NotBlank(message = "shippingAddress must not be blank")
     private String shippingAddress;
 }

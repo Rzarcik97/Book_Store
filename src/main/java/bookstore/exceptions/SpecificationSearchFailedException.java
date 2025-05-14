@@ -1,4 +1,4 @@
-package bookstore.exeptions;
+package bookstore.exceptions;
 
 public class SpecificationSearchFailedException extends RuntimeException {
     public SpecificationSearchFailedException(String message) {

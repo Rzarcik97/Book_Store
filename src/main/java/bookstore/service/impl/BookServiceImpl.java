@@ -3,7 +3,7 @@ package bookstore.service.impl;
 import bookstore.dto.book.BookDto;
 import bookstore.dto.book.BookSearchParametersDto;
 import bookstore.dto.book.CreateBookRequestDto;
-import bookstore.exeptions.EntityNotFoundException;
+import bookstore.exceptions.EntityNotFoundException;
 import bookstore.mapper.BookMapper;
 import bookstore.model.Book;
 import bookstore.repository.book.BookRepository;

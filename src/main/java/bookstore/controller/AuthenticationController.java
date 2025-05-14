@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "User_controller", description = "User management controller")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api/user")
+@RequestMapping(value = "/user")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
