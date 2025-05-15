@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-create-roles-table
+      author: kgajda
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: users_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_users_roles_user
+
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_users_roles_role
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ADMIN
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: USER
