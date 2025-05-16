@@ -12,18 +12,18 @@ import lombok.Setter;
 @Setter
 @FieldMatch
 public class UserRegistrationRequestDto {
-    @NotBlank(message = "email must not be blank")
+    @NotBlank(message = "must not be blank")
     @Email
     @UniqueField(entity = User.class, fieldName = "email",
-            message = "email already exist in DB")
+            message = "already exist in DB")
     private String email;
-    @NotBlank(message = "firstName must not be blank")
+    @NotBlank(message = "must not be blank")
     private String firstName;
-    @NotBlank(message = "lastName must not be blank")
+    @NotBlank(message = "must not be blank")
     private String lastName;
-    @NotBlank(message = "password must not be blank")
+    @NotBlank(message = "must not be blank")
     private String password;
-    @NotBlank(message = "repeatPassword must not be blank")
+    @NotBlank(message = "must not be blank")
     private String repeatPassword;
     private String shippingAddress;
 }

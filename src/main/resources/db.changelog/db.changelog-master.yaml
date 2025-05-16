@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db.changelog/changes/01-create-book-table.yml
   - include:
       file: db.changelog/changes/02-create-user-table.yml
+  - include:
+      file: db.changelog/changes/03-create-role-table.yml
+  - include:
+      file: db.changelog/changes/04-assign-role-to-users.yml
