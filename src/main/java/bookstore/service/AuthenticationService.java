@@ -6,5 +6,4 @@ import bookstore.dto.user.UserResponseDto;
 public interface AuthenticationService {
 
     UserResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto);
-
 }
