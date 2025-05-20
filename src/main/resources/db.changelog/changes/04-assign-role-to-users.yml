@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-assign-role-to-users
+      author: kgajda
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: email
+                  value: admin@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$i/lnYuPK/n5OTeeL8F3HXOdO7IDlX84p2oo/gHF67LhB3pHDuI9TS
+              - column:
+                  name: first_name
+                  value: Bob
+              - column:
+                  name: last_name
+                  value: Bobsley
+              - column:
+                  name: shipping_address
+                  value: "Warsaw, Admin St"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: email
+                  value: user@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$Q8hcD5mhCpDZojL.8M07Lu3yGe5HibT.tpsicuarme.AU2GmezpFC
+              - column:
+                  name: first_name
+                  value: Alice
+              - column:
+                  name: last_name
+                  value: Davidson
+              - column:
+                  name: shipping_address
+                  value: "Londyn, User St"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  valueNumeric: 1
+              - column:
+                  name: role_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  valueNumeric: 2
+              - column:
+                  name: role_id
+                  valueNumeric: 2
