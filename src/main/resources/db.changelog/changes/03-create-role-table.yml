@@ -9,7 +9,7 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
-                  autoIncrement: true
+                  autoIncrement: false
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -52,12 +52,18 @@ databaseChangeLog:
             tableName: roles
             columns:
               - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
                   name: name
                   value: ADMIN
 
         - insert:
             tableName: roles
             columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
               - column:
                   name: name
                   value: USER

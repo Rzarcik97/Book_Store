@@ -28,7 +28,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + name.toString();
+        return name.toString();
     }
 
     public enum RoleName {
