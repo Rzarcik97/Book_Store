@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
@@ -42,12 +43,12 @@ public class JwtUtil {
                     .getPayload()
                     .getExpiration()
                     .before(new Date());
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException | SecurityException e) {
             return false;
         }
     }
 
-    public String getUserNameAndRoles(String token) {
+    public String getUserName(String token) {
         return getClaimsFromToken(token, Claims::getSubject);
     }
 

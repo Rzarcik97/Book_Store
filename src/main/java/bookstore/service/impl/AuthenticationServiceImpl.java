@@ -4,6 +4,7 @@ import bookstore.dto.user.UserLoginRequestDto;
 import bookstore.dto.user.UserLoginResponseDto;
 import bookstore.dto.user.UserRegistrationRequestDto;
 import bookstore.dto.user.UserResponseDto;
+import bookstore.exceptions.AuthenticationException;
 import bookstore.exceptions.RegistrationException;
 import bookstore.mapper.UserMapper;
 import bookstore.model.Role;
@@ -15,6 +16,7 @@ import bookstore.service.AuthenticationService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,11 +48,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserLoginResponseDto login(UserLoginRequestDto request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
-        String token = jwtUtil.generateToken(authentication.getName());
-        return new UserLoginResponseDto(token);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            );
+            String token = jwtUtil.generateToken(authentication.getName());
+            return new UserLoginResponseDto(token);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("invalid login details");
+        }
     }
 
 }
