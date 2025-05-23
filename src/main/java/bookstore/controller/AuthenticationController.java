@@ -1,5 +1,7 @@
 package bookstore.controller;
 
+import bookstore.dto.user.UserLoginRequestDto;
+import bookstore.dto.user.UserLoginResponseDto;
 import bookstore.dto.user.UserRegistrationRequestDto;
 import bookstore.dto.user.UserResponseDto;
 import bookstore.service.AuthenticationService;
@@ -24,5 +26,11 @@ public class AuthenticationController {
     @Operation(summary = "Register User", description = "Register new user in dataBase")
     UserResponseDto register(@RequestBody @Valid UserRegistrationRequestDto request) {
         return authenticationService.register(request);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "Login User", description = "Authorize user with dataBase")
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto request) {
+        return authenticationService.login(request);
     }
 }
