@@ -2,7 +2,8 @@ package bookstore.service;
 
 import bookstore.dto.book.BookDtoWithoutCategoryIds;
 import bookstore.dto.category.CategoryDto;
-import bookstore.dto.category.CreateCategoryDto;
+import bookstore.dto.category.CategoryRequestDto;
+
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 
@@ -14,9 +15,9 @@ public interface CategoryService {
 
     List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id, Pageable pageable);
 
-    CategoryDto save(CreateCategoryDto createCategoryDto);
+    CategoryDto save(CategoryRequestDto categoryRequestDto);
 
-    CategoryDto update(Long id, CreateCategoryDto createCategoryDto);
+    CategoryDto update(Long id, CategoryRequestDto categoryRequestDto);
 
     void deleteById(Long id);
 }
