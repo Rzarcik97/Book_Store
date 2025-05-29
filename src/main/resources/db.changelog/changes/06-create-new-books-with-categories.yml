@@ -1,0 +1,302 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-create-new-books-with-categories
+      author: kgajda
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: title
+                  value: Dom Szeptów
+              - column:
+                  name: author
+                  value: Marta Krajewska
+              - column:
+                  name: isbn
+                  valueNumeric: 9788366347192
+              - column:
+                  name: price
+                  valueNumeric: 42.99
+              - column:
+                  name: description
+                  value: Mroczny horror osadzony w odludnej wiosce, gdzie stare legendy ożywają.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/dom_szeptow.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: title
+                  value: W blasku księżyca
+              - column:
+                  name: author
+                  value: Julia Nowicka
+              - column:
+                  name: isbn
+                  valueNumeric: 9788375789856
+              - column:
+                  name: price
+                  valueNumeric: 34.90
+              - column:
+                  name: description
+                  value: Uczucie, które połączyło dwoje ludzi wbrew przeciwnościom losu.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/w_blasku_ksiezyca.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: title
+                  value: Cień Smoka
+              - column:
+                  name: author
+                  value: Eliza Falk
+              - column:
+                  name: isbn
+                  valueNumeric: 9788396012345
+              - column:
+                  name: price
+                  valueNumeric: 49.50
+              - column:
+                  name: description
+                  value: Magiczna opowieść o zakazanej miłości między czarodziejką a smokiem w ludzkiej postaci.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/cien_smoka.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: title
+                  value: Lśnienie
+              - column:
+                  name: author
+                  value: Stephen King
+              - column:
+                  name: isbn
+                  valueNumeric: 9788382157923
+              - column:
+                  name: price
+                  valueNumeric: 45.00
+              - column:
+                  name: description
+                  value: Psychologiczny horror rozgrywający się w opuszczonym hotelu.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/lsnienie.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 5
+              - column:
+                  name: title
+                  value: Wiedźmin Ostatnie życzenie
+              - column:
+                  name: author
+                  value: Andrzej Sapkowski
+              - column:
+                  name: isbn
+                  valueNumeric: 9788375780635
+              - column:
+                  name: price
+                  valueNumeric: 39.99
+              - column:
+                  name: description
+                  value: Zbiór opowiadań o przygodach wiedźmina Geralta z Rivii.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/wiedzmin.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 6
+              - column:
+                  name: title
+                  value: Pan Lodowego Ogrodu
+              - column:
+                  name: author
+                  value: Jarosław Grzędowicz
+              - column:
+                  name: isbn
+                  valueNumeric: 9788375740486
+              - column:
+                  name: price
+                  valueNumeric: 24.90
+              - column:
+                  name: description
+                  value: Mroczna, epicka opowieść o walce cywilizacji i magii.
+              - column:
+                  name: cover_image
+                  value: https://example.com/images/plog.jpg
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: fantasy
+              - column:
+                  name: description
+                  value: Gatunek literacki osadzony w fikcyjnym świecie,
+                    często inspirowanym mitologią, folklorem lub średniowieczem, w 
+                    którym występują magiczne moce, nadprzyrodzone istoty i epickie przygody.
+                    Charakteryzuje się budowaniem rozbudowanych uniwersów z własnymi zasadami,
+                    historią i kulturą, gdzie magia odgrywa kluczową rolę w fabule.
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: horror
+              - column:
+                  name: description
+                  value: Gatunek literacki mający na celu wywołanie u czytelnika strachu,
+                    napięcia lub niepokoju, często poprzez konfrontację z nadprzyrodzonymi zjawiskami,
+                    potworami lub psychologicznymi lękami. Często osadzony w mrocznych,
+                    izolowanych sceneriach, eksploruje granice ludzkiej psychiki i ukazuje
+                    zło w różnych formach.
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: Romans
+              - column:
+                  name: description
+                  value: Gatunek literacki skoncentrowany na relacjach miłosnych
+                    między bohaterami,których głównym celem jest pokonanie przeszkód
+                    i osiągnięcie szczęśliwego zakończenia. Opowieści te często poruszają
+                    tematy emocji, intymności i osobistych przemian, skupiając 
+                    się na sile uczuć i ludzkich pragnieniach.
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 1
+              - column:
+                  name: categories_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 2
+              - column:
+                  name: categories_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 3
+              - column:
+                  name: categories_id
+                  valueNumeric: 3
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 3
+              - column:
+                  name: categories_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 4
+              - column:
+                  name: categories_id
+                  valueNumeric: 2
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 5
+              - column:
+                  name: categories_id
+                  valueNumeric: 1
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: books_id
+                  valueNumeric: 6
+              - column:
+                  name: categories_id
+                  valueNumeric: 1
