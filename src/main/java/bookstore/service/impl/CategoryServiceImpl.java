@@ -2,7 +2,7 @@ package bookstore.service.impl;
 
 import bookstore.dto.book.BookDtoWithoutCategoryIds;
 import bookstore.dto.category.CategoryDto;
-import bookstore.dto.category.CreateCategoryDto;
+import bookstore.dto.category.CategoryRequestDto;
 import bookstore.exceptions.EntityNotFoundException;
 import bookstore.mapper.BookMapper;
 import bookstore.mapper.CategoryMapper;
@@ -47,9 +47,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto save(CreateCategoryDto createCategoryDto) {
-        if (createCategoryDto != null) {
-            Category category = categoryMapper.toModel(createCategoryDto);
+    public CategoryDto save(CategoryRequestDto categoryRequestDto) {
+        if (categoryRequestDto != null) {
+            Category category = categoryMapper.toModel(categoryRequestDto);
             Category savedCategory = categoryRepository.save(category);
             return categoryMapper.toDto(savedCategory);
         }
@@ -57,12 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto update(Long id, CreateCategoryDto createCategoryDto) {
+    public CategoryDto update(Long id, CategoryRequestDto categoryRequestDto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Category with id: " + id + " not found"));
-        if (createCategoryDto != null) {
-            categoryMapper.updateModelFromDto(createCategoryDto, category);
+        if (categoryRequestDto != null) {
+            categoryMapper.updateModelFromDto(categoryRequestDto, category);
             Category savedCategory = categoryRepository.save(category);
             return categoryMapper.toDto(savedCategory);
         }

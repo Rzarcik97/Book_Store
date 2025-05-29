@@ -2,7 +2,7 @@ package bookstore.controller;
 
 import bookstore.dto.book.BookDtoWithoutCategoryIds;
 import bookstore.dto.category.CategoryDto;
-import bookstore.dto.category.CreateCategoryDto;
+import bookstore.dto.category.CategoryRequestDto;
 import bookstore.service.CategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -46,8 +46,8 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public CategoryDto createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
-        return categoryService.save(createCategoryDto);
+    public CategoryDto createCategory(@RequestBody CategoryRequestDto categoryRequestDto) {
+        return categoryService.save(categoryRequestDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -59,7 +59,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public CategoryDto updateCategory(@RequestParam Long id,
-                                      @RequestBody CreateCategoryDto createCategoryDto) {
-        return categoryService.update(id, createCategoryDto);
+                                      @RequestBody CategoryRequestDto categoryRequestDto) {
+        return categoryService.update(id, categoryRequestDto);
     }
 }
