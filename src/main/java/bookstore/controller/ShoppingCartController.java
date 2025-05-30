@@ -5,6 +5,7 @@ import bookstore.dto.shoppingcart.ShoppingCartDto;
 import bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ShoppingCart_controller", description = "ShoppingCart management application")
@@ -49,8 +49,9 @@ public class ShoppingCartController {
             description = "Update quantity of cartItem from Database related to your shopping cart")
     public ShoppingCartDto updateShoppingCart(Authentication authentication,
                                               @PathVariable Long id,
-                                              @RequestParam int quantity) {
+                                              @RequestBody Map<String,Integer> update) {
         String email = authentication.getName();
+        int quantity = update.get("quantity");
         return shoppingCartService.updateShoppingCart(email, id, quantity);
     }
 

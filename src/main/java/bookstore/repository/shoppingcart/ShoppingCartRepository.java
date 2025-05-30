@@ -4,6 +4,7 @@ import bookstore.model.ShoppingCart;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,5 +13,5 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
             + "LEFT JOIN FETCH s.user u "
             + "LEFT JOIN FETCH s.cartItems ci "
             + "LEFT JOIN FETCH ci.book b WHERE u.email = :email")
-    ShoppingCart getShoppingCartsByUser(@NotNull String email);
+    ShoppingCart getShoppingCartsByUser(@NotNull @Param("email") String email);
 }

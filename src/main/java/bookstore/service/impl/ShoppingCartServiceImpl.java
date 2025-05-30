@@ -33,6 +33,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto getShoppingCart(String email) {
         ShoppingCart shoppingCartsByUser = shoppingCartRepository.getShoppingCartsByUser(email);
+        if (shoppingCartsByUser == null) {
+            shoppingCartsByUser = new ShoppingCart();
+        }
         return shoppingCartMapper.toDto(shoppingCartsByUser);
     }
 
@@ -67,10 +70,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto updateShoppingCart(String email, Long cartItemId, int quantity) {
         ShoppingCart shoppingCart = shoppingCartRepository.getShoppingCartsByUser(email);
-        shoppingCart.getCartItems()
+        CartItem cartItem = shoppingCart.getCartItems()
                 .stream()
                 .filter(c -> c.getId().equals(cartItemId))
-                .forEach(s -> s.setQuantity(quantity));
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "cannot find Cart item with id: " + cartItemId
+                                + " in Your shopping cart."));
+        cartItem.setQuantity(quantity);
         ShoppingCart savedShoppingCart = shoppingCartRepository.save(shoppingCart);
         return shoppingCartMapper.toDto(savedShoppingCart);
     }
