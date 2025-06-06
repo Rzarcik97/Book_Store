@@ -56,8 +56,12 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Order.Status.PENDING);
         order.setOrderDate(LocalDateTime.now());
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
-                .map(orderItemMapper::fromCartItem)
-                .peek(orderItem -> orderItem.setOrder(order))
+                .map(ci -> {
+                    orderItemMapper.fromCartItem(ci);
+                    OrderItem orderItem = orderItemMapper.fromCartItem(ci);
+                    orderItem.setOrder(order);
+                    return orderItem;
+                })
                 .collect(Collectors.toSet());
         BigDecimal totalPrice = orderItems.stream()
                 .map(i -> i.getPrice()
