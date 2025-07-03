@@ -1,6 +1,6 @@
 package bookstore.service;
 
-import bookstore.dto.book.BookDtoWithoutCategoryIds;
+import bookstore.dto.book.BookDto;
 import bookstore.dto.category.CategoryDto;
 import bookstore.dto.category.CategoryRequestDto;
 import java.util.List;
@@ -12,7 +12,7 @@ public interface CategoryService {
 
     CategoryDto getById(Long id);
 
-    List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id, Pageable pageable);
+    List<BookDto> getBooksByCategoryId(Long id, Pageable pageable);
 
     CategoryDto save(CategoryRequestDto categoryRequestDto);
 

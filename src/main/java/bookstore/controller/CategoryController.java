@@ -1,6 +1,6 @@
 package bookstore.controller;
 
-import bookstore.dto.book.BookDtoWithoutCategoryIds;
+import bookstore.dto.book.BookDto;
 import bookstore.dto.category.CategoryDto;
 import bookstore.dto.category.CategoryRequestDto;
 import bookstore.service.CategoryService;
@@ -12,11 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Category_controller", description = "category management application")
@@ -33,13 +33,13 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public CategoryDto getCategoryById(@RequestParam Long id) {
+    public CategoryDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
     }
 
     @GetMapping("/{id}/books")
-    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
-            @RequestParam Long id,
+    public List<BookDto> getBooksByCategoryId(
+            @PathVariable Long id,
             @ParameterObject Pageable pageable) {
         return categoryService.getBooksByCategoryId(id,pageable);
     }
@@ -52,13 +52,13 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public void deleteCategory(@RequestParam Long id) {
+    public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public CategoryDto updateCategory(@RequestParam Long id,
+    public CategoryDto updateCategory(@PathVariable Long id,
                                       @RequestBody CategoryRequestDto categoryRequestDto) {
         return categoryService.update(id, categoryRequestDto);
     }
