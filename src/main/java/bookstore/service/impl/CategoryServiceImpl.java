@@ -1,6 +1,6 @@
 package bookstore.service.impl;
 
-import bookstore.dto.book.BookDtoWithoutCategoryIds;
+import bookstore.dto.book.BookDto;
 import bookstore.dto.category.CategoryDto;
 import bookstore.dto.category.CategoryRequestDto;
 import bookstore.exceptions.EntityNotFoundException;
@@ -40,9 +40,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id, Pageable pageable) {
+    public List<BookDto> getBooksByCategoryId(Long id, Pageable pageable) {
         return bookRepository.findAllByCategoryId(id, pageable).stream()
-                .map(bookMapper::toDtoWithoutCategories)
+                .map(bookMapper::toDto)
                 .toList();
     }
 

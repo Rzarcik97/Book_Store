@@ -12,9 +12,11 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -22,9 +24,11 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted = false")
 @Table(name = "books")
+@Accessors(chain = true)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
