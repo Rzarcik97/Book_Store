@@ -1,0 +1,10 @@
+DELETE from books_categories;
+DELETE from cart_items;
+DELETE from books;
+DELETE from users_roles;
+DELETE from shopping_carts;
+DELETE from users;
+ALTER TABLE books AUTO_INCREMENT = 1;
+ALTER TABLE users AUTO_INCREMENT = 1;
+ALTER TABLE cart_items AUTO_INCREMENT = 1;
+ALTER TABLE shopping_carts AUTO_INCREMENT = 1;

@@ -11,13 +11,17 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"cartItems"})
 @NoArgsConstructor
+@Accessors(chain = true)
 @Entity
 @Table(name = "shopping_carts")
 public class ShoppingCart {

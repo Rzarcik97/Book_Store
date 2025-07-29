@@ -190,7 +190,6 @@ public class CategoryControllerTest {
                 "science","science description");
         CategoryDto expected = new CategoryDto(
                 4L,"science","science description");
-
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         //When
         MvcResult result = mockMvc.perform(
