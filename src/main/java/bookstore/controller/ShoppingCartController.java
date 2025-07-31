@@ -44,23 +44,23 @@ public class ShoppingCartController {
         return shoppingCartService.addBooksToShoppingCart(email, cartItemRequestDto);
     }
 
-    @PutMapping("/cart-items/{id}")
+    @PutMapping("/cart-items/{cartItemId}")
     @Operation(summary = "Update books quantity in shopping cart",
             description = "Update quantity of cartItem from Database related to your shopping cart")
     public ShoppingCartDto updateShoppingCart(Authentication authentication,
-                                              @PathVariable Long id,
+                                              @PathVariable Long cartItemId,
                                               @RequestBody Map<String,Integer> update) {
         String email = authentication.getName();
         int quantity = update.get("quantity");
-        return shoppingCartService.updateShoppingCart(email, id, quantity);
+        return shoppingCartService.updateShoppingCart(email, cartItemId, quantity);
     }
 
-    @DeleteMapping("/cart-items/{id}")
+    @DeleteMapping("/cart-items/{cartItemId}")
     @Operation(summary = "Delete Book from shopping cart",
             description = "Delete cartItem from Database related to your shopping cart")
     public void removeBooksFromShoppingCart(Authentication authentication,
-            @PathVariable Long id) {
+            @PathVariable Long cartItemId) {
         String email = authentication.getName();
-        shoppingCartService.removeBooksFromShoppingCart(email,id);
+        shoppingCartService.removeBooksFromShoppingCart(email,cartItemId);
     }
 }

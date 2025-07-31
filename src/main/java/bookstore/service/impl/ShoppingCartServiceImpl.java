@@ -42,6 +42,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto addBooksToShoppingCart(
             String email, CartItemRequestDto cartItemRequestDto) {
+        if (cartItemRequestDto.quantity() <= 0) {
+            throw new RuntimeException("quantity is cannot be less or equal 0");
+        }
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("cannot find user with email: " + email));
         ShoppingCart shoppingCart = shoppingCartRepository.getShoppingCartsByUser(email);
@@ -70,6 +73,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto updateShoppingCart(String email, Long cartItemId, int quantity) {
         ShoppingCart shoppingCart = shoppingCartRepository.getShoppingCartsByUser(email);
+        if (quantity <= 0) {
+            throw new RuntimeException("quantity is cannot be less or equal 0");
+        }
+        if (shoppingCart == null) {
+            throw new EntityNotFoundException("cannot find Yours ShoppingCart");
+        }
         CartItem cartItem = shoppingCart.getCartItems()
                 .stream()
                 .filter(c -> c.getId().equals(cartItemId))

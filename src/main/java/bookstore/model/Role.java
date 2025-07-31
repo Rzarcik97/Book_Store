@@ -11,11 +11,13 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Getter
 @Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 @Table(name = "roles")
 public class Role implements GrantedAuthority {

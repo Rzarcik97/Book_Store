@@ -7,17 +7,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import bookstore.dto.book.BookDto;
-import bookstore.dto.category.CategoryDto;
-import bookstore.dto.category.CategoryRequestDto;
+import bookstore.dto.cartitem.CartItemDto;
+import bookstore.dto.cartitem.CartItemRequestDto;
+import bookstore.dto.shoppingcart.ShoppingCartDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -38,7 +37,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
-public class CategoryControllerTest {
+public class ShoppingCartControllerTests {
 
     protected static MockMvc mockMvc;
 
@@ -59,7 +58,7 @@ public class CategoryControllerTest {
             ScriptUtils.executeSqlScript(
                     connection,
                     new ClassPathResource(
-                            "database/categorytest/add-three-default-books-with-categories.sql")
+                            "database/shoppingCart/add-shoppingCart-with-items.sql")
             );
         }
     }
@@ -77,158 +76,142 @@ public class CategoryControllerTest {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
-                    new ClassPathResource("database/categorytest/delete-tables.sql")
+                    new ClassPathResource("database/shoppingCart/delete-tables.sql")
             );
         }
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "User@email.com")
     @Test
-    @DisplayName("Get all categories from database")
-    void getAll_ValidRequestDto_Success() throws Exception {
+    @DisplayName("Get User's ShoppingCart from database")
+    void getShoppingCart_ValidRequestDto_Success() throws Exception {
         //given
-        List<CategoryDto> expected = new ArrayList<>();
-        expected.add(new CategoryDto(1L,"fantasy","fantasy description"));
-        expected.add(new CategoryDto(2L,"horror","horror description"));
-        expected.add(new CategoryDto(3L,"romans","romans description"));
+        CartItemDto cartItemDto = new CartItemDto(1L,1L,"The Pragmatic Programmer",3);
+        CartItemDto cartItemDto2 = new CartItemDto(2L,2L,"Clean Code",5);
+        Set<CartItemDto> cartItems = Set.of(cartItemDto, cartItemDto2);
+        ShoppingCartDto expected = new ShoppingCartDto(1L,1L,cartItems);
         //When
         MvcResult result = mockMvc.perform(
-                        get("/categories")
+                        get("/cart")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        CategoryDto[] actual = objectMapper.readValue(
+        ShoppingCartDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                CategoryDto[].class);
-        Assertions.assertEquals(3, actual.length);
-        Assertions.assertEquals(expected, Arrays.stream(actual).toList());
-    }
-
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    @Test
-    @DisplayName("Get categories by id from database")
-    void getCategoryById_ValidRequestDto_Success() throws Exception {
-        //given
-        CategoryDto expected = new CategoryDto(1L,"fantasy","fantasy description");
-        //When
-        MvcResult result = mockMvc.perform(
-                        get("/categories/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andReturn();
-        //then
-        CategoryDto actual = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                CategoryDto.class);
+                ShoppingCartDto.class);
         Assertions.assertEquals(expected, actual);
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "User2@email.com")
     @Test
-    @DisplayName("get books by given category id")
-    void getBooksByCategoryId_ValidRequestDto_Success() throws Exception {
+    @DisplayName("Get User's ShoppingCart from database")
+    void getShoppingCart_UserWithoutShoppingCart_ReturnEmptyShoppingCart() throws Exception {
         //given
-        List<BookDto> expected = new ArrayList<>();
-        expected.add(new BookDto().setId(1L)
-                .setTitle("The Pragmatic Programmer")
-                .setAuthor("Andrew Hunt")
-                .setIsbn("9780201616224")
-                .setCategory("fantasy")
-                .setPrice(BigDecimal.valueOf(42.99))
-                .setDescription("Classic book on software craftsmanship.")
-                .setCoverImage("https://example.com/images/pragmatic.jpg"));
+        ShoppingCartDto expected = new ShoppingCartDto(null,null,new HashSet<>());
         //When
         MvcResult result = mockMvc.perform(
-                        get("/categories/1/books")
+                        get("/cart")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        BookDto[] actual = objectMapper.readValue(
+        ShoppingCartDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                BookDto[].class);
-        Assertions.assertEquals(expected, Arrays.stream(actual).toList());
+                ShoppingCartDto.class);
+        Assertions.assertEquals(expected, actual);
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
-    @DisplayName("Delete Category by id from database")
-    void delete_ValidRequestDto_Success() throws Exception {
-        //given
-        List<CategoryDto> expected = new ArrayList<>();
-        expected.add(new CategoryDto(1L,"fantasy","fantasy description"));
-        expected.add(new CategoryDto(2L,"horror","horror description"));
+    @DisplayName("Get User's ShoppingCart from database")
+    void getShoppingCart_UserNotAuthorized_Return401Code() throws Exception {
         //When
         mockMvc.perform(
-                delete("/categories/3")
+                get("/cart")
                         .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-        MvcResult result = mockMvc.perform(
-                        get("/categories")
-                                .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
-                .andReturn();
-        //then
-        CategoryDto[] actual = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                CategoryDto[].class);
-        Assertions.assertEquals(2, actual.length);
-        Assertions.assertEquals(expected, Arrays.stream(actual).toList());
+                .andExpect(status().isUnauthorized());
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "User@email.com")
     @Test
-    @DisplayName("Create new book and save to database")
-    void create_ValidRequestDto_Success() throws Exception {
+    @DisplayName("Add book to User's ShoppingCart to database")
+    void addBooksToShoppingCart_ValidRequestDto_Success() throws Exception {
         //given
-        CategoryRequestDto requestDto = new CategoryRequestDto(
-                "science","science description");
-        CategoryDto expected = new CategoryDto(
-                4L,"science","science description");
+        CartItemDto cartItemDto = new CartItemDto(1L,1L,"The Pragmatic Programmer",3);
+        CartItemDto cartItemDto2 = new CartItemDto(2L,2L,"Clean Code",5);
+        CartItemDto cartItemDto3 = new CartItemDto(3L,3L,"Effective Java",8);
+        Set<CartItemDto> cartItems = Set.of(cartItemDto, cartItemDto2, cartItemDto3);
+        ShoppingCartDto expected = new ShoppingCartDto(1L,1L,cartItems);
+        CartItemRequestDto requestDto = new CartItemRequestDto(3L,8);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         //When
         MvcResult result = mockMvc.perform(
-                        post("/categories")
+                        post("/cart")
                                 .content(jsonRequest)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        CategoryDto actual = objectMapper.readValue(
+        ShoppingCartDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                CategoryDto.class);
+                ShoppingCartDto.class);
         Assertions.assertEquals(expected, actual);
     }
 
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "User@email.com")
     @Test
-    @DisplayName("update book and save to database")
-    void update_ValidRequestDto_Success() throws Exception {
+    @DisplayName("Update book to User's ShoppingCart to database")
+    void updateShoppingCart_ValidRequestDto_Success() throws Exception {
         //given
-        CategoryRequestDto requestDto = new CategoryRequestDto(
-                "updated category","updated description");
-        CategoryDto expected = new CategoryDto(1L,
-                "updated category","updated description");
-
+        CartItemDto cartItemDto = new CartItemDto(1L,1L,"The Pragmatic Programmer",3);
+        CartItemDto cartItemDto2 = new CartItemDto(2L,2L,"Clean Code",8);
+        Set<CartItemDto> cartItems = Set.of(cartItemDto, cartItemDto2);
+        ShoppingCartDto expected = new ShoppingCartDto(1L,1L,cartItems);
+        Map<String,Integer> requestDto = Map.of("quantity",8);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         //When
         MvcResult result = mockMvc.perform(
-                        put("/categories/1")
+                        put("/cart/cart-items/2")
                                 .content(jsonRequest)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        CategoryDto actual = objectMapper.readValue(
+        ShoppingCartDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                CategoryDto.class);
+                ShoppingCartDto.class);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @WithMockUser(username = "User@email.com")
+    @Test
+    @DisplayName("Delete CartItem from User's ShoppingCart from database")
+    void removeBooksFromShoppingCart_ValidRequestDto_Success() throws Exception {
+        //given
+        CartItemDto cartItemDto = new CartItemDto(1L,1L,"The Pragmatic Programmer",3);
+        Set<CartItemDto> cartItems = Set.of(cartItemDto);
+        ShoppingCartDto expected = new ShoppingCartDto(1L,1L,cartItems);
+        //When
+        mockMvc.perform(
+                delete("/cart/cart-items/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+        MvcResult result = mockMvc.perform(
+                        get("/cart")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        ShoppingCartDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                ShoppingCartDto.class);
         Assertions.assertEquals(expected, actual);
     }
 }
