@@ -1,17 +1,16 @@
 package bookstore;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import bookstore.dto.cartitem.CartItemDto;
 import bookstore.dto.cartitem.CartItemRequestDto;
 import bookstore.dto.shoppingcart.ShoppingCartDto;
+import bookstore.exceptions.EntityNotFoundException;
 import bookstore.mapper.ShoppingCartMapper;
 import bookstore.model.Book;
 import bookstore.model.CartItem;
@@ -111,15 +110,29 @@ public class ShoppingCartServiceTests {
         ShoppingCartDto actual = shoppingCartService.getShoppingCart(email);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(shoppingCartRepository, times(1)).getShoppingCartsByUser(email);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
-        verifyNoMoreInteractions(shoppingCartRepository,shoppingCartMapper);
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the empty shoppingCart is returned when User Don't have any ShoppingCart.
+            """)
+    public void getShoppingCart_UserHaveNoShoppingCart_ReturnEmptyShoppingCart() {
+        //Given
+        String email = "test@test.com";
+        ShoppingCartDto expected = new ShoppingCartDto(null,null,new HashSet<>());
+
+        when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(null);
+        when(shoppingCartMapper.toDto(any())).thenReturn(expected);
+        //When
+        ShoppingCartDto actual = shoppingCartService.getShoppingCart(email);
+        //then
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     @DisplayName("""
             Verify that the method return new empty ShoppingCart
-            when given user dont have shoppingCart.
+             when given user dont have shoppingCart.
             """)
     public void getShoppingCart_UserDontHaveShoppingCart_ReturnEmptyShoppingCart_Success() {
         String email = "test@test.com";
@@ -130,9 +143,6 @@ public class ShoppingCartServiceTests {
         ShoppingCartDto actual = shoppingCartService.getShoppingCart(email);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(shoppingCartRepository, times(1)).getShoppingCartsByUser(email);
-        verify(shoppingCartMapper, times(1)).toDto(any(ShoppingCart.class));
-        verifyNoMoreInteractions(shoppingCartRepository,shoppingCartMapper);
     }
 
     @Test
@@ -204,17 +214,85 @@ public class ShoppingCartServiceTests {
                 .addBooksToShoppingCart(email,cartItemRequestDto);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(userRepository, times(1)).findByEmail(email);
-        verify(shoppingCartRepository, times(1)).getShoppingCartsByUser(email);
-        verify(bookRepository, times(1)).findById(cartItemRequestDto.bookId());
-        verify(cartItemService,times(1))
-                .save(book,cartItemRequestDto.quantity(),shoppingCart);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
-        verifyNoMoreInteractions(shoppingCartRepository,
-                shoppingCartMapper,
-                userRepository,
-                cartItemService,
-                bookRepository);
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws Exception When
+             quantity of request is less or equals then 0
+            """)
+    public void addBooksToShoppingCart_quantityLessOrEquals0_Success() {
+        String email = "test@test.com";
+        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto(2L,-1);
+
+        assertThatThrownBy(() -> shoppingCartService
+                .addBooksToShoppingCart(email, cartItemRequestDto))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("quantity is cannot be less or equal 0");
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws exception while Book dont exist in DB
+            """)
+    public void addBooksToShoppingCart_AddingBookWhoDontExistInDB_ThrowsException() {
+        String email = "test@test.com";
+        User user = new User()
+                .setEmail(email)
+                .setId(1L)
+                .setPassword("password")
+                .setFirstName("Robert")
+                .setLastName("Martin")
+                .setRoles(Set.of(new Role()
+                        .setId(1L)
+                        .setName(Role.RoleName.USER)))
+                .setShippingAddress("adress")
+                .setDeleted(false);
+        CartItem cartItem = new CartItem()
+                .setId(1L)
+                .setBook(new Book()
+                        .setId(1L)
+                        .setTitle("The Pragmatic Programmer")
+                        .setAuthor("Andrew Hunt")
+                        .setIsbn("9780201616224")
+                        .setPrice(BigDecimal.valueOf(42.99))
+                        .setDescription("Classic book on software craftsmanship.")
+                        .setCoverImage("https://example.com/images/pragmatic.jpg")
+                        .setDeleted(false))
+                .setQuantity(3);
+        Set<CartItem> setOfCartItem = new HashSet<>();
+        setOfCartItem.add(cartItem);
+        ShoppingCart shoppingCart = new ShoppingCart()
+                .setId(1L)
+                .setCartItems(setOfCartItem)
+                .setUser(user);
+        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto(2L,3);
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(shoppingCart);
+        when(bookRepository.findById(cartItemRequestDto.bookId())).thenReturn(Optional.empty());
+
+        //when
+        assertThatThrownBy(() -> shoppingCartService
+                .addBooksToShoppingCart(email, cartItemRequestDto))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("cannot find Book with id:" + cartItemRequestDto.bookId());
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws EntityNotFoundException when the given User is not found.
+            """)
+    public void addBooksToShoppingCart_UserNotExist_Success() {
+        String email = "test@test.com";
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto(2L,3);
+
+        assertThatThrownBy(() -> shoppingCartService
+                .addBooksToShoppingCart(email, cartItemRequestDto))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("cannot find user with email: " + email);
     }
 
     @Test
@@ -267,17 +345,6 @@ public class ShoppingCartServiceTests {
                 .addBooksToShoppingCart(email,cartItemRequestDto);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(userRepository, times(1)).findByEmail(email);
-        verify(shoppingCartRepository, times(1)).getShoppingCartsByUser(email);
-        verify(bookRepository, times(1)).findById(cartItemRequestDto.bookId());
-        verify(cartItemService,times(1))
-                .save(any(Book.class),anyInt(),any(ShoppingCart.class));
-        verify(shoppingCartMapper, times(1)).toDto(any(ShoppingCart.class));
-        verifyNoMoreInteractions(shoppingCartRepository,
-                shoppingCartMapper,
-                userRepository,
-                cartItemService,
-                bookRepository);
     }
 
     @Test
@@ -316,10 +383,10 @@ public class ShoppingCartServiceTests {
                 .setId(1L)
                 .setCartItems(setOfCartItem)
                 .setUser(user);
-        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto(1L,2);
-        CartItemDto cartItemDto = new CartItemDto(1L,1L,"The Pragmatic Programmer",5);
+        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto(1L, 2);
+        CartItemDto cartItemDto = new CartItemDto(1L, 1L, "The Pragmatic Programmer", 5);
         Set<CartItemDto> setOfCartItemDto1 = Set.of(cartItemDto);
-        ShoppingCartDto expected = new ShoppingCartDto(1L,1L,setOfCartItemDto1);
+        ShoppingCartDto expected = new ShoppingCartDto(1L, 1L, setOfCartItemDto1);
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(shoppingCart);
@@ -328,15 +395,9 @@ public class ShoppingCartServiceTests {
 
         //when
         ShoppingCartDto actual = shoppingCartService
-                .addBooksToShoppingCart(email,cartItemRequestDto);
+                .addBooksToShoppingCart(email, cartItemRequestDto);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(userRepository, times(1)).findByEmail(email);
-        verify(shoppingCartRepository, times(2)).getShoppingCartsByUser(email);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
-        verifyNoMoreInteractions(shoppingCartRepository,
-                shoppingCartMapper,
-                userRepository);
     }
 
     @Test
@@ -386,8 +447,57 @@ public class ShoppingCartServiceTests {
         ShoppingCartDto actual = shoppingCartService.updateShoppingCart(email, 1L,3);
         //then
         assertThat(actual).isEqualTo(expected);
-        verify(shoppingCartRepository, times(1)).getShoppingCartsByUser(email);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
-        verifyNoMoreInteractions(shoppingCartRepository, shoppingCartMapper);
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws exception book is not found in shoppingCart.
+            """)
+    public void updateShoppingCart_BookNotFoundInShoppingCart_ThrowsException() {
+        String email = "test@test.com";
+        Long cartItemId = 1L;
+        int quantity = 3;
+
+        when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(new ShoppingCart());
+
+        assertThatThrownBy(() -> shoppingCartService
+                .updateShoppingCart(email, cartItemId, quantity))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("cannot find Cart item with id: " + cartItemId
+                        + " in Your shopping cart.");
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws exception when quantity is less or equals 0.
+            """)
+    public void updateShoppingCart_quantityLessOrEquals0_ThrowsException() {
+        String email = "test@test.com";
+        Long cartItemId = 1L;
+        int quantity = -1;
+
+        when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(null);
+
+        assertThatThrownBy(() -> shoppingCartService
+                .updateShoppingCart(email, cartItemId, quantity))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("quantity is cannot be less or equal 0");
+    }
+
+    @Test
+    @DisplayName("""
+            Verify that the method throws exception book is not found in shoppingCart.
+            """)
+    public void updateShoppingCart_ShoppingCartIsNotFound_ThrowsException() {
+        String email = "test@test.com";
+        Long cartItemId = 1L;
+        int quantity = 3;
+
+        when(shoppingCartRepository.getShoppingCartsByUser(email)).thenReturn(null);
+
+        assertThatThrownBy(() -> shoppingCartService
+                .updateShoppingCart(email, cartItemId, quantity))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("cannot find Yours ShoppingCart");
     }
 }

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.sql.DataSource;
@@ -101,6 +102,37 @@ public class ShoppingCartControllerTests {
                 result.getResponse().getContentAsString(),
                 ShoppingCartDto.class);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @WithMockUser(username = "User2@email.com")
+    @Test
+    @DisplayName("Get User's ShoppingCart from database")
+    void getShoppingCart_UserWithoutShoppingCart_ReturnEmptyShoppingCart() throws Exception {
+        //given
+        ShoppingCartDto expected = new ShoppingCartDto(null,null,new HashSet<>());
+        //When
+        MvcResult result = mockMvc.perform(
+                        get("/cart")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+        //then
+        ShoppingCartDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                ShoppingCartDto.class);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Get User's ShoppingCart from database")
+    void getShoppingCart_UserNotAuthorized_Return401Code() throws Exception {
+        //When
+        mockMvc.perform(
+                get("/cart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isUnauthorized());
     }
 
     @WithMockUser(username = "User@email.com")
