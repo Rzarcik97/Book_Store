@@ -1,7 +1,10 @@
 # Book Store
 
-A Spring Boot application that supports user accounts, allowing users to log in, browse books, add them to a shopping cart, and place orders based on the cart contents. The application also includes an administrator role who can manage books, categories, and orders in the database.
+## 📖 Introduction
 
+A Spring Boot application that supports user accounts, allowing users to log in, browse books, add them to a shopping cart, and place orders based on the cart contents. The application also includes an administrator role who can manage books, categories, and orders in the database.
+## 💡Motivation
+This application was developed as part of my Java backend learning journey to simulate a real-world e-commerce experience using modern Spring technologies. The goal of this project was to gain hands-on experience in building a secure, scalable, and maintainable REST API while applying best practices in software architecture, testing, and database management.
 ## 🔐 Authentication & Authorization
 
 The application uses JWT for token-based authentication. Users log in with their credentials to receive a JWT token, which must be included in the Authorization header of subsequent API requests.
@@ -20,7 +23,15 @@ Response:
   "token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTc1Mzg3NDk2NiwiZXhwIjoxNzUzODgwOTY2fQ.Ajm5algUEId-iAUzSiJnBK224u_-DVl9zWbzJK1P1aRg_p_aDHXNaVnqbRW1Yj465ROYAu8ehAB6NVuxjxIDmg"
  }
  ```
+## ✨ Key Features & Highlights
 
+- 🔎 **Advanced Search & Filtering** – books can be queried by multiple fields (title, author, category, price range) using the **Specification pattern**, providing flexible and dynamic queries.
+- 📄 **Pagination & Sorting** – all list endpoints return paginated and sortable results to ensure scalability and performance.
+- ⚡ **Exception Handling** – centralized error management implemented with `@ControllerAdvice`, returning consistent error responses in JSON format.
+- ✅ **DTO Validation** – request payloads are validated with **Hibernate Validator** annotations, ensuring data integrity before processing.
+- 🔐 **Secure Authentication & Authorization** – powered by **Spring Security + JWT tokens**, with role-based access for `USER` and `ADMIN`.
+- 🛠 **Database Migrations with Liquibase** – automatic changelog execution creates users, roles, books, and categories at startup for easy setup.
+- 🧪 **Integration Testing with Testcontainers** – ensures reliability by running tests against real MySQL in Docker.
 ## 🎯 Role & Permissions
 
 **👤 User (ROLE_USER) can:**
@@ -110,10 +121,19 @@ On startup, Liquibase automatically sets up the schema and inserts initial data 
 | 3  | Romance  | Stories centered on emotional and intimate relationships.                                            |
 
 Books are pre-linked with relevant categories via `books_categories`.
+## 📚 Lessons Learned & Challenges
+
+- 🔐 **JWT Authentication** – configuring Spring Security with JWT was challenging, especially handling token expiration and refresh logic. I learned how to design a clean security layer with filters and exception handling.
+- 🗄 **Liquibase Migrations** – ensuring proper changelog order and rollback strategy was tricky at first. Now I understand how to structure changesets for a production-ready database.
+- 🔗 **Entity Relationships** – mapping many-to-many relationships between `Books` and `Categories` required careful design to avoid recursion and performance issues in serialization.
+- 🧪 **Testcontainers** – integrating Testcontainers for MySQL was a big step forward. It gave me hands-on experience with running reproducible integration tests in different environments.
+
+💡 This project helped me strengthen my skills in **Spring Security, database versioning, and clean API design**, while also improving my ability to debug and reason about complex backend systems.
 
 ## 📖 API Documentation
-After Starting an aplication interactive API documentation is available via Swagger UI at:
+You can test endpoints via Swagger UI or your favorite REST client (e.g., Postman). 
 
+By default, when you launch the app, interactive API documentation is available via the Swagger UI at:
 http://localhost:8081/api/swagger-ui/index.html#/
 
 This documentation allows you to explore and test all available endpoints, see request/response models, and read detailed descriptions.
@@ -126,7 +146,7 @@ This documentation allows you to explore and test all available endpoints, see r
 
 - Maven
 
-- MySQL (lub kontener Docker)
+- MySQL (or Docker Container)
 
 ## 🚀 How to Run
 **Clone the repository:**
@@ -134,6 +154,7 @@ This documentation allows you to explore and test all available endpoints, see r
 	git clone https://github.com/Rzarcik97/Book_Store.git
 
 Configure your database connection in src/main/resources/application.properties
+
 By default, the project uses MySQL for production and H2 for tests.
 
 **Build the project using Maven:**
@@ -145,3 +166,13 @@ By default, the project uses MySQL for production and H2 for tests.
 	docker compose up
 
 **Access the API at**  ```http://localhost:8081```
+
+## 🗂 System Overview
+
+Below is a simplified architecture diagram showing how the application components interact:
+
+![Architecture Diagram](src/docs/Application-diagram.png)
+
+The screenshot below shows a fragment of the application in Swagger OpenAPI
+
+![Architecture Diagram](src/docs/Swagger-screenshot.png)

@@ -25,7 +25,7 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @GetMapping
-    @Operation(summary = "Get all CartItem in shopping cart",
+    @Operation(summary = "Get all CartItem from shopping cart",
             description = "Get all CartItem from Database related to your shopping cart")
     public ShoppingCartDto getShoppingCart(Authentication authentication) {
         String email = authentication.getName();
@@ -33,8 +33,8 @@ public class ShoppingCartController {
     }
 
     @PostMapping
-    @Operation(summary = "add CartItem in shopping cart",
-            description = "add cartItem to Database related to your shopping cart,"
+    @Operation(summary = "Add CartItem to shopping cart",
+            description = "Add cartItem to Database related to your shopping cart,"
                     + " if cartItem already exist,the quantity of books in cartItem"
                     + " will be updated instead")
     public ShoppingCartDto addBooksToShoppingCart(
@@ -56,7 +56,7 @@ public class ShoppingCartController {
     }
 
     @DeleteMapping("/cart-items/{cartItemId}")
-    @Operation(summary = "Delete Book from shopping cart",
+    @Operation(summary = "Delete cartItem from shopping cart",
             description = "Delete cartItem from Database related to your shopping cart")
     public void removeBooksFromShoppingCart(Authentication authentication,
             @PathVariable Long cartItemId) {

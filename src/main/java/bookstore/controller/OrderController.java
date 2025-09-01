@@ -40,8 +40,8 @@ public class OrderController {
     }
 
     @PostMapping
-    @Operation(summary = "place an order",
-            description = "place an order, the order will be created from"
+    @Operation(summary = "Place an order",
+            description = "Place an order, the order will be created from"
                     + " your current shopping cart")
     public OrderDto createOrder(
             Authentication authentication,
